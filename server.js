@@ -55,7 +55,55 @@ app.get('/api/resources/:id', (req, res) => {
     res.json(resource);
 });
 
+app.post('/api/resources', (req, res) => {
+    const { title } = req.body || {}; //get title from request body
 
+    //require title to be a string and not empty
+    if (typeof title !== 'string' || title.trim() === '') {
+        return res.status(400).json({ error: 'Title is required and must be a non-empty string' });
+    }
+
+    const newResource = {
+        id: nextId++,
+        title: title.trim(),
+        completed: false,
+    };
+
+    resources.push(newResource); //add new resource to resources array
+    res.status(201).json(newResource); //return new resource with 201 status code
+});
+
+app.put('/api/resources/:id', (req, res) => { //replace task title and status 
+    const id = Number(req.params.id);
+
+    const resource = resources.find((resource) => resource.id === id);
+
+    if (!resource) {
+        return res.status(404).json({
+            error: 'Resource not found.'
+        });
+    }
+
+    const { title, completed } = req.body || {};
+
+    // Validate both fields before changing the task.
+    if (typeof title !== 'string' || title.trim() === '') {
+        return res.status(400).json({
+            error: 'A task title is required.'
+        });
+    }
+
+    if (typeof completed !== 'boolean') {
+        return res.status(400).json({
+            error: 'completed must be true or false.'
+        });
+    }
+
+    resource.title = title.trim();
+    resource.completed = completed;
+
+    res.status(200).json(resource);
+});
 
 
 app.listen(PORT, () => { //starts server
