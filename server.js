@@ -105,6 +105,21 @@ app.put('/api/resources/:id', (req, res) => { //replace task title and status
     res.status(200).json(resource);
 });
 
+app.delete('/api/resources/:id', (req, res) => { //delete task by id
+    const id = Number(req.params.id);
+
+    const index = resources.findIndex((resource) => resource.id === id);
+
+    if (index === -1) {
+        return res.status(404).json({
+            error: 'Resource not found.'
+        });
+    }
+
+    resources.splice(index, 1);
+
+    res.status(200).json({ message: 'Resource deleted.' });
+});
 
 app.listen(PORT, () => { //starts server
     console.log(`Server is running on port ${PORT}`);
