@@ -1,6 +1,6 @@
 const express = require('express');
 const app = express();
-const port = 3000;
+const PORT = 3000;
 
 
 
@@ -39,12 +39,26 @@ const resources = [
 let nextId = 4; // next id to assign to a new resource
 
 // GET /resources - get all resources
-app.get('api/resources', (req, res) => {
+app.get('/api/resources', (req, res) => {
     res.json(resources);
 });
 
+//return task by id 
+app.get('/api/resources/:id', (req, res) => {
+    const id = parseInt(req.params.id); //cinvert id to integer
+    const resource = resources.find((resource) => resource.id === id);
+
+    if(!resource) { //if resource not found, return 404
+        return res.status(404).json({ error: 'Resource not found' }); 
+    }
+
+    res.json(resource);
+});
+
+
+
 
 app.listen(PORT, () => { //starts server
-    console.log(`Server is running on port ${port}`);
+    console.log(`Server is running on port ${PORT}`);
 });
 
